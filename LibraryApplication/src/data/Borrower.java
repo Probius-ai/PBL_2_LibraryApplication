@@ -6,13 +6,11 @@ import java.util.List;
 public class Borrower {
     private int borrowerId;
     private String name;
-    private String contact;
     private List<Loan> loanHistory;
 
-    public Borrower(int borrowerId, String name, String contact) {
+    public Borrower(int borrowerId, String name) {
         this.borrowerId = borrowerId;
         this.name = name;
-        this.contact = contact;
         this.loanHistory = new ArrayList<>();
     }
 
