@@ -7,12 +7,26 @@ public class Book implements Comparable<Book> {
     private String title;
     private String author;
     private boolean isAvailable;
+    private Loan currentLoan;
 
     public Book(String isbn, String title, String author) {
         this.isbn = isbn;
         this.title = title;
         this.author = author;
         this.isAvailable = true;
+        this.currentLoan = null;
+    }
+
+    public boolean isAvailable() {
+        return currentLoan == null;
+    }
+
+    public void setLoan(Loan loan) {
+        this.currentLoan = loan;
+    }
+
+    public Loan getCurrentLoan() {
+        return currentLoan;
     }
 
     // Getters and setters

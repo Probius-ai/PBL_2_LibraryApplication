@@ -5,15 +5,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Objects;
+import java.util.HashSet;
 
 public class Library {
     private Set<Book> books;
-    private List<Borrower> borrowers;
+    private Set<Borrower> borrowers;
     private List<Loan> loans;
 
     public Library() {
         this.books = new TreeSet<>();
-        this.borrowers = new ArrayList<>();
+        this.borrowers = new HashSet<>();
         this.loans = new ArrayList<>();
     }
 
@@ -29,10 +30,21 @@ public class Library {
         if (book.isAvailable()) {
             Loan loan = new Loan(book, borrower);
             loans.add(loan);
-            book.setAvailable(false);
+            book.setLoan(loan);
             return loan;
         }
         return null;
+    }
+
+    public Set<Book> getBooks() {
+        return books;
+    }
+
+    public void returnBook(Loan loan) {
+        if (loans.contains(loan)) {
+            loans.remove(loan);
+            loan.getBook().setLoan(null);
+        }
     }
 
     // 추가 메서드들
