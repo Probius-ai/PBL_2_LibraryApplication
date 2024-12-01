@@ -17,5 +17,29 @@ public class Loan {
     }
 
     // Getters and setters
+    public Book getBook() {
+        return this.book;
+    }
+
+    public Borrower getBorrower() {
+        return this.borrower;
+    }
+
+    public LocalDate getLoanDate() {
+        return this.loanDate;
+    }
+
+    public LocalDate getDueDate() {
+        return this.dueDate;
+    }
+
+    public LocalDate getReturnDate() {
+        return this.returnDate;
+    }
+
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
+    }
+
     // ... 기본 getter/setter 메서드들 ...
 }

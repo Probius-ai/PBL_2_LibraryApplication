@@ -1,6 +1,7 @@
 package function;
 
 import data.Library;
+import java.util.List;
 
 public class LibraryApplication {
     private Library library;
@@ -48,5 +49,32 @@ public class LibraryApplication {
 
     public LoanedBookListFunction getLoanedBookList() {
         return loanedBookList;
+    }
+
+    // 실제 사용 예시 메서드들
+    public void processBookLoan(Book book, Borrower borrower) {
+        // 비즈니스 로직을 BookLoanFunction으로 위임
+        bookLoan.loanBook(book, borrower);
+    }
+
+    public void processBookReturn(Loan loan) {
+        // 비즈니스 로직을 BookReturnFunction으로 위임
+        bookReturn.returnBook(loan);
+    }
+
+    public void registerNewBook(Book book) {
+        bookRegistration.registerBook(book);
+    }
+
+    public void registerNewBorrower(Borrower borrower) {
+        borrowerRegistration.registerBorrower(borrower);
+    }
+
+    public List<Book> getAvailableBooks() {
+        return availableBookList.getAvailableBooks();
+    }
+
+    public List<Book> getLoanedBooks() {
+        return loanedBookList.getLoanedBooks();
     }
 }
