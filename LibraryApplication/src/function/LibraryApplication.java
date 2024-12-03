@@ -52,29 +52,29 @@ public class LibraryApplication {
     }
 
     // 실제 사용 예시 메서드들
-    public void processBookLoan(Book book, Borrower borrower) {
+    public void processBookLoan(data.Book book, data.Borrower borrower) {
         // 비즈니스 로직을 BookLoanFunction으로 위임
         bookLoan.loanBook(book, borrower);
     }
 
-    public void processBookReturn(Loan loan) {
+    public void processBookReturn(data.Loan loan) {
         // 비즈니스 로직을 BookReturnFunction으로 위임
         bookReturn.returnBook(loan);
     }
 
-    public void registerNewBook(Book book) {
+    public void registerNewBook(data.Book book) {
         bookRegistration.registerBook(book);
     }
 
-    public void registerNewBorrower(Borrower borrower) {
+    public void registerNewBorrower(data.Borrower borrower) {
         borrowerRegistration.registerBorrower(borrower);
     }
 
-    public List<Book> getAvailableBooks() {
+    public List<data.Book> getAvailableBooks() {
         return availableBookList.getAvailableBooks();
     }
 
-    public List<Book> getLoanedBooks() {
+    public List<data.Book> getLoanedBooks() {
         return loanedBookList.getLoanedBooks();
     }
 }
