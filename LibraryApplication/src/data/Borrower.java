@@ -16,6 +16,18 @@ public class Borrower {
     }
 
     // Getters and setters
+    public int getBorrowerId() {
+        return borrowerId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Loan> getLoanHistory() {
+        return loanHistory;
+    }
+
     // ... 기본 getter/setter 메서드들 ...
 
     @Override

@@ -51,6 +51,11 @@ public class LibraryApplication {
         return loanedBookList;
     }
 
+    // Library 인스턴스에 접근하기 위한 getter 메소드 추가
+    public Library getLibrary() {
+        return library;
+    }
+
     // 실제 사용 예시 메서드들
     public void processBookLoan(data.Book book, data.Borrower borrower) {
         // 비즈니스 로직을 BookLoanFunction으로 위임

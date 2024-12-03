@@ -1,3 +1,5 @@
+package gui;
+
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.TreeSet;
@@ -6,7 +8,7 @@ import java.util.Set;
 
 public class CopyOfGui5 extends JFrame {
 
-    private LibraryApplication lib;
+    private function.LibraryApplication libApp;
     private DefaultListModel<Object> model;
     private JList<Object> leftList;
     private JTextArea rightTextArea;
@@ -22,7 +24,7 @@ public class CopyOfGui5 extends JFrame {
         container.setLayout(null);
 
         // LibraryApplication 초기화
-        lib = new LibraryApplication();
+        libApp = new function.LibraryApplication();
 
         // 입력 필드
         JTextField inputField = new JTextField();
@@ -38,18 +40,18 @@ public class CopyOfGui5 extends JFrame {
             });
 
         // 상단 버튼 생성
-        JButton button1 = new JButton("신규 책 등록");
-        button1.setBounds(170, 10, 120, 30);
-        JButton button2 = new JButton("책 표시");
-        button2.setBounds(300, 10, 120, 30);
-        JButton button3 = new JButton("이용자 등록");
-        button3.setBounds(430, 10, 120, 30);
-        JButton button4 = new JButton("반납");
-        button4.setBounds(560, 10, 120, 30);
-        container.add(button1);
-        container.add(button2);
-        container.add(button3);
-        container.add(button4);
+        JButton registerBook = new JButton("신규 책 등록");
+        registerBook.setBounds(170, 10, 120, 30);
+        JButton showBook = new JButton("책 표시");
+        showBook.setBounds(300, 10, 120, 30);
+        JButton registerBorrower = new JButton("이용자 등록");
+        registerBorrower.setBounds(430, 10, 120, 30);
+        JButton returnBook = new JButton("반납");
+        returnBook.setBounds(560, 10, 120, 30);
+        container.add(registerBook);
+        container.add(showBook);
+        container.add(registerBorrower);
+        container.add(returnBook);
 
         // JList와 모델 생성
         model = new DefaultListModel<>();
@@ -94,19 +96,19 @@ public class CopyOfGui5 extends JFrame {
                     if (!e.getValueIsAdjusting()) { // 사용자가 선택을 완료했을 때만 처리
                         Object selectedObject = leftList.getSelectedValue();
                         if (selectedObject != null) {
-                            if (selectedObject instanceof Book) { // Book 객체일 때 처리
-                                Book book = (Book) selectedObject;
+                            if (selectedObject instanceof data.Book) { // Book 객체일 때 처리
+                                data.Book book = (data.Book) selectedObject;
                                 rightTextArea.setText("Book Details:\n" +
                                     "Title: " + book.getTitle() + "\n" +
                                     "Author: " + book.getAuthor() + "\n" +
-                                    "Catalog Number: " + book.getUniqueCatalogNum() + "\n" +
+                                    "ISBN: " + book.getIsbn() + "\n" +
                                     "On Loan: " + (book.loanCheck() ? "Yes" : "No"));
                                 loanButton.setVisible(false); // 버튼 비활성화
-                            } else if (selectedObject instanceof Borrower) { // Borrower 객체일 때 처리
-                                Borrower borrower = (Borrower) selectedObject;
+                            } else if (selectedObject instanceof data.Borrower) { // Borrower 객체일 때 처리
+                                data.Borrower borrower = (data.Borrower) selectedObject;
                                 rightTextArea.setText("Borrower Details:\n" +
                                     "Name: " + borrower.getName() + "\n" +
-                                    "Id: " + borrower.getId());
+                                    "Id: " + borrower.getBorrowerId());
                                 // Borrower에 다른 정보가 있다면 여기 추가
                                 loanButton.setVisible(true); // 버튼 활성화
 
@@ -125,40 +127,29 @@ public class CopyOfGui5 extends JFrame {
 
         // 오른쪽 텍스트 영역 및 버튼 코드 (변경된 부분)
         loanButton.addActionListener(ae -> {
-                    // JList에서 선택한 객체를 가져옴
-                    Borrower selectedBorrower = (Borrower) leftList.getSelectedValue();
-                    if (selectedBorrower != null) {
-                        // 책의 카탈로그 번호를 입력받는 다이얼로그 띄우기
-                        JTextField catalogField = new JTextField();
-                        Object[] message = {
-                                "Enter Catalog Number:", catalogField
-                            };
-
-                        int option = JOptionPane.showConfirmDialog(this, message, "Loan Book", JOptionPane.OK_CANCEL_OPTION);
-                        if (option == JOptionPane.OK_OPTION) {
-                            try {
-                                // 카탈로그 번호를 입력받고, 이를 int로 변환
-                                int uniqueCatalogNum = Integer.parseInt(catalogField.getText());
-
-                                // LoanBook 메소드 호출
-                                lib.loanBook(selectedBorrower.getId(), uniqueCatalogNum); // 이름과 카탈로그 번호 전달
-
-                                // 성공 메시지
-                                JOptionPane.showMessageDialog(this, "Book loaned successfully!");
-                            } catch (NumberFormatException ex) {
-                                // 유효하지 않은 카탈로그 번호 입력 시 에러 메시지
-                                JOptionPane.showMessageDialog(this, "Invalid Catalog Number!", "Error", JOptionPane.ERROR_MESSAGE);
-                            } catch(IllegalArgumentException ex){
-                                JOptionPane.showMessageDialog(this, ex.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
-                            }
+            data.Borrower selectedBorrower = (data.Borrower) leftList.getSelectedValue();
+            if (selectedBorrower != null) {
+                String isbn = JOptionPane.showInputDialog(this, "Enter ISBN:");
+                if (isbn != null && !isbn.isEmpty()) {
+                    try {
+                        data.Book book = libApp.getLibrary().findBookByISBN(isbn);
+                        if (book != null) {
+                            libApp.processBookLoan(book, selectedBorrower);
+                            JOptionPane.showMessageDialog(this, "대출이 완료되었습니다.");
+                        } else {
+                            JOptionPane.showMessageDialog(this, "해당 ISBN의 책을 찾을 수 없습니다.");
                         }
+                    } catch (IllegalStateException | IllegalArgumentException ex) {
+                        JOptionPane.showMessageDialog(this, ex.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
                     }
-            });
+                }
+            }
+        });
         // 버튼 이벤트 처리
-        button1.addActionListener(e -> registerNewBook());
-        button2.addActionListener(e -> 
+        registerBook.addActionListener(e -> registerNewBook());
+        showBook.addActionListener(e -> 
                 showBookFilterDialog());
-        button3.addActionListener(e -> 
+        registerBorrower.addActionListener(e -> 
                 registerNewBorrower());
         button4.addActionListener(e -> 
                 returnBook());
@@ -191,11 +182,13 @@ public class CopyOfGui5 extends JFrame {
                     try {
                         String title = titleField.getText();
                         String author = authorField.getText();
-                        int catalogNum = Integer.parseInt(catalogNumField.getText());
-                        lib.addBook(title, author, catalogNum);
+                        String isbn = catalogNumField.getText(); // catalogNum을 isbn으로 사용
+                        
+                        data.Book newBook = new data.Book(isbn, title, author);
+                        libApp.registerNewBook(newBook);
                         dialog.dispose();
-                    } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(dialog, "Catalog Number는 숫자여야 합니다.");
+                    } catch (IllegalArgumentException ex) {
+                        JOptionPane.showMessageDialog(dialog, ex.getMessage());
                     }
             });
 
@@ -231,15 +224,13 @@ public class CopyOfGui5 extends JFrame {
         okButton.addActionListener(ae -> {
                     try {
                         String name = nameField.getText().trim();
-                        int id =  Integer.parseInt(idField.getText());
-                        if (name.isEmpty()) {
-                            throw new IllegalArgumentException("이름은 비워둘 수 없습니다.");
-                        }
-                        lib.addBorrower(name,id); // 이름 추가
+                        int id = Integer.parseInt(idField.getText());
+                        
+                        data.Borrower newBorrower = new data.Borrower(id, name);
+                        libApp.registerNewBorrower(newBorrower);
                         JOptionPane.showMessageDialog(dialog, "등록이 완료되었습니다.");
                         dialog.dispose();
                     } catch (IllegalArgumentException ex) {
-                        // IllegalArgumentException에 대한 메시지 처리
                         JOptionPane.showMessageDialog(dialog, ex.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
                     }
             });
@@ -268,14 +259,16 @@ public class CopyOfGui5 extends JFrame {
         okButton.setBounds(100, 140, 80, 30);
         okButton.addActionListener(ae -> {
                     try {
-                        int catalogNum = Integer.parseInt(catalogNumField.getText());
-                        lib.returnBook(catalogNum); // 여기서 IllegalArgumentException 발생 가능
-                        JOptionPane.showMessageDialog(dialog, "책이 성공적으로 반납되었습니다.");
-                        dialog.dispose();
-                    } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(dialog, "Catalog Number는 숫자여야 합니다.");
-                    }  catch (IllegalArgumentException ex) {
-                        // IllegalArgumentException에 대한 메시지 처리
+                        String isbn = catalogNumField.getText();
+                        data.Book book = libApp.getLibrary().findBookByISBN(isbn);
+                        if (book != null && book.getCurrentLoan() != null) {
+                            libApp.processBookReturn(book.getCurrentLoan());
+                            JOptionPane.showMessageDialog(dialog, "반납이 완료되었습니다.");
+                            dialog.dispose();
+                        } else {
+                            JOptionPane.showMessageDialog(dialog, "대출 중인 책이 아닙니다.");
+                        }
+                    } catch (IllegalArgumentException ex) {
                         JOptionPane.showMessageDialog(dialog, ex.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
                     }
             });
@@ -302,18 +295,18 @@ public class CopyOfGui5 extends JFrame {
         JButton okButton = new JButton("확인");
         okButton.setBounds(100, 120, 80, 30);
         okButton.addActionListener(ae -> {
-                    TreeSet<Book> books = lib.getBooks();
-                    ArrayList<Book> filteredBooks = new ArrayList<>();
+                    Set<data.Book> books = libApp.getLibrary().getBooks(); // Library를 통해 책 목록 가져오기
+                    ArrayList<data.Book> filteredBooks = new ArrayList<>();
 
                     if (onLoanCheckBox.isSelected()) {
-                        for (Book book : books) {
+                        for (data.Book book : books) {
                             if (book.loanCheck()) {
                                 filteredBooks.add(book);
                             }
                         }
                     }
                     if (availableCheckBox.isSelected()) {
-                        for (Book book : books) {
+                        for (data.Book book : books) {
                             if (!book.loanCheck()) {
                                 filteredBooks.add(book);
                             }
@@ -338,25 +331,23 @@ public class CopyOfGui5 extends JFrame {
     }
 
     // 리스트 모델 업데이트
-    private void updateModel(ArrayList<Book> books) {
+    private void updateModel(ArrayList<data.Book> books) {
         model.clear();
-        for (Book book : books) {
+        for (data.Book book : books) {
             model.addElement(book);
         }
     }
 
     private void updateBorrowerList(String searchName) {
-        model.clear(); // 기존 데이터 초기화
-
-        // 검색 결과 가져오기
-        Set<Borrower> allBorrowers = lib.getBorrowers(); // LibraryApplication에서 모든 Borrower 가져오기
-        for (Borrower borrower : allBorrowers) {
-            if (borrower.getName().contains(searchName)) { // 이름이 검색어를 포함하는 경우
-                model.addElement(borrower); // 검색된 객체를 리스트에 추가
+        model.clear();
+        Set<data.Borrower> allBorrowers = libApp.getLibrary().getBorrowers(); // Library를 통해 대출자 목록 가져오기
+        
+        for (data.Borrower borrower : allBorrowers) {
+            if (borrower.getName().contains(searchName)) {
+                model.addElement(borrower);
             }
         }
 
-        // 검색 결과가 없을 때 처리
         if (model.isEmpty()) {
             JOptionPane.showMessageDialog(this, "검색 결과가 없습니다: " + searchName);
         }

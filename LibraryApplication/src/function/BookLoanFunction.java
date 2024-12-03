@@ -30,7 +30,7 @@ public class BookLoanFunction {
         // 대출 처리
         Loan loan = new Loan(book, borrower);
         book.setLoan(loan);
-        library.lendBook(loan);
+        //library.lendBook(loan);
         
         return loan;
     }
