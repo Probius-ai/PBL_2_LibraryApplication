@@ -16,7 +16,7 @@ public class BookLoanFunction {
     }
 
     public Loan loanBook(Book book, Borrower borrower) {
-        // 대출 가능 여부 검증
+        // 대출 가능 여부 검증// hashset 검토 가능성
         List<Book> availableBooks = availableBookList.getAvailableBooks();
         if (!availableBooks.contains(book)) {
             throw new IllegalStateException("이 도서는 현재 대출이 불가능합니다.");
