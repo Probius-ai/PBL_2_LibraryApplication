@@ -22,8 +22,14 @@ public class BorrowerSearchFunction {
         return library.getBorrowers().stream()
                 .filter(borrower -> borrower.getName().contains(searchName))
                 .collect(Collectors.toCollection(ArrayList::new));
-        // 대출자 이름으로 검색 //대출자 객체 반환
+        // 대출자 이름으로 검색 //대출자 객체 반환 //반환값 borrower.getBorrowerId() 사용 가능 
 
-        
+    }
+
+    public ArrayList<Borrower> searchBorrowersById(int searchId) {
+        return library.getBorrowers().stream()
+                .filter(borrower -> borrower.getBorrowerId() == searchId)
+                .collect(Collectors.toCollection(ArrayList::new));
+        // 대출자 아이디로 검색 //대출자 객체 반환 //반환값 borrower.getName() 사용 가능
     }
 } 
