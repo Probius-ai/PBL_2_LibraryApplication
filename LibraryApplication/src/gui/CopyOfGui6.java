@@ -6,6 +6,7 @@ import data.*;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class CopyOfGui6 extends JFrame {
     private LibraryApplication libraryApp;  // LibraryApplication 객체 선언
@@ -108,7 +109,7 @@ public class CopyOfGui6 extends JFrame {
                                     "Title: " + book.getTitle() + "\n" +
                                     "Author: " + book.getAuthor() + "\n" +
                                     "ISBN: " + book.getIsbn() + "\n" +
-                                    "On Loan: " + (book.loanCheck() ? "Yes" : "No"));
+                                    "On Loan: " + (book.isAvailable() ? "Yes" : "No"));
                                 loanButton.setVisible(false);  // Book이 선택되면 loanButton을 비활성화
 
                             } else if (selectedObject instanceof Borrower) {  // 선택된 객체가 Borrower일 경우
@@ -150,11 +151,56 @@ public class CopyOfGui6 extends JFrame {
                                 // Library 객체에서 해당 ISBN의 책을 찾기
                                 Library library = libraryApp.getLibrary(); // 이미 생성된 Library 객체 가져오기
                                 Book bookToLoan = library.findBookByISBN(isbn); // 해당 ISBN으로 책 검색
-
+                                /////////////////////////////////////////
+                                // ===== 추가된 코드 시작 =====
+                                // ISBN으로 검색된 책 목록 가져오기
+                                ArrayList<Book> foundBooks = library.getBooks().stream()
+                                        .filter(book -> book.getIsbn().contains(isbn))
+                                        .collect(Collectors.toCollection(ArrayList::new));
+                                
+                                // 검색된 책이 없는 경우
+                                if (foundBooks.isEmpty()) {
+                                    JOptionPane.showMessageDialog(this, "해당 ISBN으로 검색된 책이 없습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+                                    return;
+                                }
+                                
+                                // 검색된 책이 여러 권인 경우 선택 다이얼로그 표시
+                                if (foundBooks.size() > 1) {
+                                    String[] bookTitles = foundBooks.stream()
+                                            .map(book -> book.getTitle() + " (" + book.getIsbn() + ")")
+                                            .toArray(String[]::new);
+                                            
+                                    String selectedBook = (String) JOptionPane.showInputDialog(
+                                        this,
+                                        "여러 권의 책이 검색되었습니다. 대출할 책을 선택하세요:",
+                                        "책 선택",
+                                        JOptionPane.QUESTION_MESSAGE,
+                                        null,
+                                        bookTitles,
+                                        bookTitles[0]
+                                    );
+                                    
+                                    if (selectedBook == null) {
+                                        return; // 사용자가 취소한 경우
+                                    }
+                                    
+                                    // 선택된 책 찾기
+                                    String selectedIsbn = selectedBook.substring(
+                                        selectedBook.lastIndexOf("(") + 1,
+                                        selectedBook.lastIndexOf(")")
+                                    );
+                                    bookToLoan = foundBooks.stream()
+                                            .filter(book -> book.getIsbn().equals(selectedIsbn))
+                                            .findFirst()
+                                            .orElse(null);
+                                } else {
+                                    bookToLoan = foundBooks.get(0);
+                                }
+                                // ===== 추가된 코드 끝 =====
                                 // 책을 대출하는 로직
-                                if (bookToLoan != null && !bookToLoan.loanCheck()) {
+                                if (bookToLoan != null && !bookToLoan.isAvailable()) {
                                     // 대출이 가능한 책이면 대출 처리
-                                    libraryApp.processBookLoan(bookToLoan, selectedBorrower); // 대출 처리 (Library 클래스에서 처리)
+                                    libraryApp.getBookLoan().loanBook(bookToLoan, selectedBorrower); // 대출 처리 (Library 클래스에서 처리)
 
                                     // 성공 메시지
                                     JOptionPane.showMessageDialog(this, "Book loaned successfully!");
