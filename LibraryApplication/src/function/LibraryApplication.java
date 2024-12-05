@@ -67,11 +67,11 @@ public class LibraryApplication {
         bookReturn.returnBook(loan);
     }
 
-    public void registerNewBook(String isbn, String title, String author) {
+    public void registerNewBook(String isbn, String title, String author) {// 새로운 책 등록 기능 
         bookRegistration.registerNewBook(isbn, title, author);
     }
 
-    public void registerNewBorrower(int borrowerId, String name) {
+    public void registerNewBorrower(int borrowerId, String name) {// 새로운 대출자 등록 기능 
         borrowerRegistration.registerBorrower(borrowerId, name);
     }
 
