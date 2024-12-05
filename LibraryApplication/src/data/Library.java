@@ -87,4 +87,18 @@ public class Library {
 
     // 추가 메서드들
     // ... 도서 반납, 도서 검색 등의 메서드들 ...
+
+    // 특정 사용자의 대출 기록을 조회하는 메서드 추가// 추후 추가 function 클래스로 옮길 예정
+    public List<Loan> getBorrowerLoanHistory(Borrower borrower) {
+        return loanHistory.getAllLoans().stream()
+                .filter(loan -> loan.getBorrower().equals(borrower))
+                .toList();
+    }
+
+    // 특정 사용자의 현재 대출 목록을 조회하는 메서드 추가 // 추후 추가 function 클래스로 옮길 예정
+    public List<Loan> getBorrowerCurrentLoans(Borrower borrower) {
+        return loanHistory.getCurrentLoans().stream()
+                .filter(loan -> loan.getBorrower().equals(borrower))
+                .toList();
+    }
 }

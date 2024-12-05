@@ -15,15 +15,15 @@ public class Book implements Comparable<Book> {
         this.currentLoan = null;
     }
 
-    public boolean isAvailable() {
+    public boolean isAvailable() { // 책이 대출 가능한지 확인 //Loan 객체가 null인지 확인(등록안됨)
         return currentLoan == null;
     }
 
-    public void setLoan(Loan loan) {
+    public void setLoan(Loan loan) { // Book 객체에 Loan 객체 참조
         this.currentLoan = loan;
     }
 
-    public Loan getCurrentLoan() {
+    public Loan getCurrentLoan() { // Book 객체에 Loan 객체 참조 반환
         return currentLoan;
     }
 
