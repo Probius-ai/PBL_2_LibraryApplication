@@ -67,12 +67,12 @@ public class LibraryApplication {
         bookReturn.returnBook(loan);
     }
 
-    public void registerNewBook(data.Book book) {
-        bookRegistration.registerBook(book);
+    public void registerNewBook(String isbn, String title, String author) {
+        bookRegistration.registerNewBook(isbn, title, author);
     }
 
-    public void registerNewBorrower(data.Borrower borrower) {
-        borrowerRegistration.registerBorrower(borrower);
+    public void registerNewBorrower(int borrowerId, String name) {
+        borrowerRegistration.registerBorrower(borrowerId, name);
     }
 
     public List<data.Book> getAvailableBooks() {
