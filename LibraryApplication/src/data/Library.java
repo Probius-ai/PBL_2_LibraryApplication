@@ -1,25 +1,25 @@
 package data;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Objects;
 import java.util.HashSet;
-import java.time.LocalDate;
+import java.util.LinkedList;
 
 public class Library {
     private Set<Book> bookCollection;
     private Set<Borrower> borrowerCollection;
+    private LinkedList<Loan> loanCollection;
     private LoanHistory loanHistory;
 
     public Library() {
         this.bookCollection = new TreeSet<>();
         this.borrowerCollection = new HashSet<>();
+        this.loanCollection = new LinkedList<>();
         this.loanHistory = new LoanHistory();
     }
 
-    public void addBook(Book book) {
+    public void registerBook(Book book) {
         bookCollection.add(book);
     }
 
@@ -30,6 +30,7 @@ public class Library {
     public Loan lendBook(Book book, Borrower borrower) {
         if (book.isAvailable()) {
             Loan loan = new Loan(book, borrower);
+            loanCollection.add(loan);
             loanHistory.addNewLoan(loan);
             book.setLoan(loan);
             return loan;
@@ -74,6 +75,19 @@ public class Library {
                 .filter(book -> book.getIsbn().equals(isbn))  // ISBN이 일치하는 책 필터링
                 .findFirst()  // 첫 번째 일치하는 책 선택
                 .orElse(null);  // 책을 찾지 못한 경우 null 반환
+    }
+
+    // LinkedList 관련 새로운 메서드들
+    public LinkedList<Loan> getLoanCollection() {
+        return new LinkedList<>(loanCollection);
+    }
+
+    public Loan getLatestLoan() {
+        return loanCollection.isEmpty() ? null : loanCollection.getLast();
+    }
+
+    public Loan getFirstLoan() {
+        return loanCollection.isEmpty() ? null : loanCollection.getFirst();
     }
 
     // 추가 메서드들

@@ -23,7 +23,7 @@ public class BookReturnFunction {
         loan.getBook().setLoan(null);
         
         // 도서관의 대출 목록에서 제거하고 이력에 추가
-        library.returnBook(loan);
+        library.returnBook(loan);   
     }
 
     // 특정 도서의 대출 이력 조회

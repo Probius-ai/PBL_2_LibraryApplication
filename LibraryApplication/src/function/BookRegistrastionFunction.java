@@ -10,7 +10,8 @@ public class BookRegistrastionFunction {
         this.library = library;
     }
 
-    public void registerBook(Book book) {
-        library.addBook(book);
+    public void registerNewBook(String isbn, String title, String author) {
+        Book newBook = new Book(isbn, title, author);
+        library.registerBook(newBook);
     }
 }
