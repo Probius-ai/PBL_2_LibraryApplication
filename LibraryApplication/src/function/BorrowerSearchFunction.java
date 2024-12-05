@@ -3,7 +3,6 @@ package function;
 import data.Library;
 import data.Borrower;
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BorrowerSearchFunction {
