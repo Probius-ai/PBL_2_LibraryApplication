@@ -26,6 +26,12 @@ public class BorrowerSearchFunction {
 
     }
 
+    /**
+     * 대출자 ID로 검색합니다.
+     * @param searchId 검색할 대출자 ID
+     * @return 검색된 대출자 목록
+     */
+
     public ArrayList<Borrower> searchBorrowersById(int searchId) {
         return library.getBorrowers().stream()
                 .filter(borrower -> borrower.getBorrowerId() == searchId)
