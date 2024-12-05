@@ -27,11 +27,9 @@ public class BookLoanFunction {
             throw new IllegalArgumentException("등록되지 않은 대출자입니다.");
         }
 
-        // 대출 처리
+        // 대출 객체 생성 및 등록
         Loan loan = new Loan(book, borrower);
-        book.setLoan(loan);
-        //library.lendBook(loan);
-        
+        library.registerLoan(loan);
         return loan;
     }
 }

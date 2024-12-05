@@ -27,15 +27,10 @@ public class Library {
         borrowerCollection.add(borrower);
     }
 
-    public Loan lendBook(Book book, Borrower borrower) {
-        if (book.isAvailable()) {
-            Loan loan = new Loan(book, borrower);
-            loanCollection.add(loan);
-            loanHistory.addNewLoan(loan);
-            book.setLoan(loan);
-            return loan;
-        }
-        return null;
+    public void registerLoan(Loan loan) {
+        loanCollection.add(loan);
+        loanHistory.addNewLoan(loan);
+        loan.getBook().setLoan(loan);
     }
 
     public Set<Book> getBooks() {
