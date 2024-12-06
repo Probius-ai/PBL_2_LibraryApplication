@@ -2,25 +2,25 @@ package gui;
 
 import javax.swing.*;         // JFrame, JDialog, JButton, JLabel, JTextField 등 GUI 관련 클래스들
 import java.awt.*;            // Container, Dimension, BoxLayout 등 레이아웃 및 크기 관련 클래스들
-import java.util.List;        // List 인터페이스
+// import java.util.List;        // List 인터페이스
 import function.*;
 import data.*;
 import java.util.Set;
 import java.util.ArrayList;
-import java.util.TreeSet;
+// import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public class CopyOfGui6 extends JFrame {
+public class CopyOfGui7 extends JFrame {
     private LibraryApplication libraryApp;  // LibraryApplication 객체 선언
     private DefaultListModel<Object> model;
-    private DefaultListModel<Object> loanModel;
+    // private DefaultListModel<Object> loanModel;
     private JList<Object> leftList;
     private JList<Object> loanList;
     private JTextArea rightTextArea;
     private BorrowerSearchFunction borrowerSearch;
 
     // 생성자에서 libraryApp 초기화
-    public CopyOfGui6(LibraryApplication libraryApp) {
+    public CopyOfGui7(LibraryApplication libraryApp) {
         this.libraryApp = libraryApp;  // 전달받은 LibraryApplication 객체 사용
         this.borrowerSearch = new BorrowerSearchFunction(libraryApp.getLibrary());
 
@@ -92,7 +92,7 @@ public class CopyOfGui6 extends JFrame {
         container.add(rightPanel); // 컨테이너에 추가
         
         // JList와 모델 생성
-        loanModel = new DefaultListModel<>();
+        // loanModel = new DefaultListModel<>();
         loanList = new JList<>(model);
         loanList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -406,7 +406,7 @@ public class CopyOfGui6 extends JFrame {
                     Set<Book> books = libraryApp.getLibrary().getBooks(); // libraryApp에서 Library 가져오기
                     ArrayList<Book> filteredBooks = new ArrayList<>();
 
-                    // 필터링 조건에 맞는 책을 filteredBooks에 추가
+                    // 대출 중인 책 표시 선택되었을때
                     if (onLoanCheckBox.isSelected()) {
                         for (Book book : books) {
                             if (!book.isAvailable()) { // 대출 중인 책
@@ -414,6 +414,7 @@ public class CopyOfGui6 extends JFrame {
                             }
                         }
                     }
+                    // 대출 가능한 책 표시 선택되었을때
                     if (availableCheckBox.isSelected()) {
                         for (Book book : books) {
                             if (book.isAvailable()) { // 대출 가능한 책

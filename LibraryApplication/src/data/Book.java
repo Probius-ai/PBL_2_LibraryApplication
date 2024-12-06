@@ -84,4 +84,9 @@ public class Book implements Comparable<Book> {
     public int hashCode() {
         return Objects.hash(isbn);
     }
+
+    @Override
+    public String toString() {
+        return getTitle(); // 책의 제목을 반환 // 인터페이스 출력용
+    }
 }

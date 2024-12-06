@@ -40,4 +40,9 @@ public class Borrower {
         // 이 해시값을 기준으로 저장 위치가 결정되어 O(1) 검색 가능
         return Objects.hash(borrowerId);
     }
+
+    @Override
+    public String toString() {
+        return getName(); // 책의 제목을 반환 // 인터페이스 출력용
+    }
 }
