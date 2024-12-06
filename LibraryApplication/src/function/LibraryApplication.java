@@ -4,6 +4,8 @@ import data.Library;
 import java.util.List;
 
 public class LibraryApplication {
+    private static final String DATA_FILE = "library_data.ser";
+    
     private Library library;
     private AvailableBookListFunction availableBookList;
     private BookLoanFunction bookLoan;
@@ -92,5 +94,22 @@ public class LibraryApplication {
     // 대출된 책 목록 반환
     public List<data.Book> getLoanedBooks() {
         return loanedBookList.getLoanedBooks();
+    }
+
+    public void saveLibraryData() {
+        library.saveToFile(DATA_FILE);
+    }
+    
+    public void loadLibraryData() {
+        try {
+            library.loadFromFile(DATA_FILE);
+            // 기능들 재초기화
+            initializeFunctions();
+        } catch (RuntimeException e) {
+            System.err.println("데이터 파일을 불러올 수 없습니다: " + e.getMessage());
+            // 새로운 라이브러리로 시작
+            this.library = new Library();
+            initializeFunctions();
+        }
     }
 }

@@ -1,10 +1,12 @@
 package data;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoanHistory {
+public class LoanHistory implements Serializable {
+    private static final long serialVersionUID = 1L;
     private List<Loan> completedLoans;  // 반납된 대출 기록
     private List<Loan> currentLoans;    // 현재 진행 중인 대출
 

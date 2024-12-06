@@ -3,12 +3,15 @@ package gui;
 import javax.swing.*;         // JFrame, JDialog, JButton, JLabel, JTextField 등 GUI 관련 클래스들
 import java.awt.*;            // Container, Dimension, BoxLayout 등 레이아웃 및 크기 관련 클래스들
 // import java.util.List;        // List 인터페이스
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import function.*;
 import data.*;
 import java.util.Set;
 import java.util.ArrayList;
 // import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.List;
 
 public class CopyOfGui7 extends JFrame {
     private LibraryApplication libraryApp;  // LibraryApplication 객체 선언
@@ -23,6 +26,51 @@ public class CopyOfGui7 extends JFrame {
     public CopyOfGui7(LibraryApplication libraryApp) {
         this.libraryApp = libraryApp;  // 전달받은 LibraryApplication 객체 사용
         this.borrowerSearch = new BorrowerSearchFunction(libraryApp.getLibrary());
+
+        // 파일이 존재할 때만 데이터 로드
+        try {
+            libraryApp.loadLibraryData();
+        } catch (Exception e) {
+            System.out.println("저장된 데이터가 없습니다. 새로운 데이터베이스를 시작합니다.");
+        }
+
+        // 윈도우 종료 시 데이터 저장 부분 수정
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                boolean saveSuccessful = false;
+                while (!saveSuccessful) {
+                    try {
+                        libraryApp.saveLibraryData();
+                        saveSuccessful = true;
+                        System.exit(0);
+                    } catch (Exception ex) {
+                        int option = JOptionPane.showConfirmDialog(
+                            CopyOfGui7.this,
+                            "데이터 저장 중 오류가 발생했습니다.\n다시 시도하시겠습니까?",
+                            "저장 오류",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.ERROR_MESSAGE
+                        );
+                        
+                        if (option != JOptionPane.YES_OPTION) {
+                            int exitOption = JOptionPane.showConfirmDialog(
+                                CopyOfGui7.this,
+                                "저장하지 않고 종료하시겠습니까?",
+                                "종료 확인",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.WARNING_MESSAGE
+                            );
+                            if (exitOption == JOptionPane.YES_OPTION) {
+                                System.exit(0);
+                            } else {
+                                saveSuccessful = false;
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
         // JFrame 기본 설정
         setTitle("도서관 관리");
@@ -451,44 +499,105 @@ public class CopyOfGui7 extends JFrame {
     }
     // 반납 버튼 메소드
     public void returnBook() {
-        JDialog dialog = new JDialog(this, "반납", true);
-        dialog.setSize(300, 220);
-        dialog.setLayout(null);
+        JDialog dialog = new JDialog(this, "도서 반납", true);
+        dialog.setSize(300, 150);
+        dialog.setLayout(new BorderLayout(10, 10));
 
-        JLabel isbnLabel = new JLabel("ISBNNum:");
-        isbnLabel.setBounds(20, 100, 100, 30);
+        // 입력 패널 생성
+        JPanel inputPanel = new JPanel(new BorderLayout(5, 5));
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        JLabel isbnLabel = new JLabel("ISBN 번호:");
         JTextField isbnField = new JTextField();
-        isbnField.setBounds(100, 100, 150, 30);
+        inputPanel.add(isbnLabel, BorderLayout.WEST);
+        inputPanel.add(isbnField, BorderLayout.CENTER);
 
-        JButton okButton = new JButton("OK");
-        okButton.setBounds(100, 140, 80, 30);
+        // 버튼 패널 생성
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton okButton = new JButton("반납");
+        JButton cancelButton = new JButton("취소");
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
+
+        // 반납 처리
         okButton.addActionListener(ae -> {
             try {
                 String isbn = isbnField.getText().trim();
-                Library library = libraryApp.getLibrary(); // 이미 생성된 Library 객체 가져오기
-                Book bookToReturn = library.findBookByISBN(isbn); // 해당 ISBN으로 책 검색
-
-                if (bookToReturn == null) {
-                    throw new IllegalArgumentException("해당 ISBN으로 책을 찾을 수 없습니다.");
+                if (isbn.isEmpty()) {
+                    throw new IllegalArgumentException("ISBN을 입력해주세요.");
                 }
 
-                Loan returnBook = bookToReturn.getCurrentLoan();
-                if (returnBook == null) {
-                    throw new IllegalArgumentException("이 책은 대출 중이 아닙니다.");
+                // 대출 중인 도서 검색
+                List<Book> loanedBooks = libraryApp.getLoanedBookList().searchLoanedBooksByIsbn(isbn);
+                
+                if (loanedBooks.isEmpty()) {
+                    throw new IllegalArgumentException("해당 ISBN으로 대출된 도서를 찾을 수 없습니다.");
                 }
 
-                libraryApp.getBookReturn().returnBook(returnBook);
-                JOptionPane.showMessageDialog(dialog, "책이 성공적으로 반납되었습니다.");
-                dialog.dispose();
+                Book bookToReturn;
+                if (loanedBooks.size() > 1) {
+                    // 여러 권이 검색된 경우 선택 다이얼로그 표시
+                    String[] bookOptions = loanedBooks.stream()
+                        .map(book -> libraryApp.getLoanedBookList().getLoanInfo(book))
+                        .toArray(String[]::new);
+
+                    String selectedBook = (String) JOptionPane.showInputDialog(
+                        dialog,
+                        "반납할 도서를 선택하세요:",
+                        "도서 선택",
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        bookOptions,
+                        bookOptions[0]
+                    );
+
+                    if (selectedBook == null) {
+                        return;
+                    }
+
+                    String selectedIsbn = selectedBook.substring(
+                        selectedBook.indexOf("(") + 1,
+                        selectedBook.indexOf(")")
+                    );
+                    bookToReturn = loanedBooks.stream()
+                        .filter(book -> book.getIsbn().equals(selectedIsbn))
+                        .findFirst()
+                        .orElse(null);
+                } else {
+                    bookToReturn = loanedBooks.get(0);
+                }
+
+                // 반납 처리
+                if (bookToReturn != null) {
+                    Loan loanToReturn = bookToReturn.getCurrentLoan();
+                    libraryApp.getBookReturn().returnBook(loanToReturn);
+                    
+                    String message = String.format("'%s' 도서가 성공적으로 반납되었습니다.\n대출자: %s", 
+                        bookToReturn.getTitle(),
+                        loanToReturn.getBorrower().getName());
+                        
+                    JOptionPane.showMessageDialog(dialog, message, "반납 완료", JOptionPane.INFORMATION_MESSAGE);
+                    dialog.dispose();
+                }
+
             } catch (IllegalArgumentException ex) {
-                JOptionPane.showMessageDialog(dialog, ex.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, 
+                    ex.getMessage(), 
+                    "오류", 
+                    JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(dialog, 
+                    "반납 처리 중 오류가 발생했습니다: " + ex.getMessage(), 
+                    "오류", 
+                    JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        dialog.add(isbnLabel);
-        dialog.add(isbnField);
-        dialog.add(okButton);
+        // 취소 버튼 처리
+        cancelButton.addActionListener(e -> dialog.dispose());
 
+        dialog.add(inputPanel, BorderLayout.CENTER);
+        dialog.add(buttonPanel, BorderLayout.SOUTH);
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
     }
@@ -496,7 +605,7 @@ public class CopyOfGui7 extends JFrame {
     public static void main(String[] args) {
         LibraryApplication libraryApp = new LibraryApplication();  // LibraryApplication 객체 생성
         SwingUtilities.invokeLater(() -> {
-                    CopyOfGui6 gui = new CopyOfGui6(libraryApp);  // 생성된 libraryApp을 GUI에 전달
+                    CopyOfGui7 gui = new CopyOfGui7(libraryApp);  // 생성된 libraryApp을 GUI에 전달
                     gui.setVisible(true);
             });
     }

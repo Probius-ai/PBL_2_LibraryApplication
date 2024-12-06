@@ -2,6 +2,8 @@ package gui;
 
 import javax.swing.*;         // JFrame, JDialog, JButton, JLabel, JTextField 등 GUI 관련 클래스들
 import java.awt.*;            // Container, Dimension, BoxLayout 등 레이아웃 및 크기 관련 클래스들
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;        // List 인터페이스
 import function.*;
 import data.*;
@@ -23,6 +25,18 @@ public class CopyOfGui6 extends JFrame {
     public CopyOfGui6(LibraryApplication libraryApp) {
         this.libraryApp = libraryApp;  // 전달받은 LibraryApplication 객체 사용
         this.borrowerSearch = new BorrowerSearchFunction(libraryApp.getLibrary());
+
+        // 시작 시 데이터 로드
+        libraryApp.loadLibraryData();
+        
+        // 윈도우 종료 시 데이터 저장
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                libraryApp.saveLibraryData();
+                System.exit(0);
+            }
+        });
 
         // JFrame 기본 설정
         setTitle("도서관 관리");
