@@ -407,50 +407,57 @@ public class CopyOfGui7 extends JFrame {
         dialog.setLayout(null);
         dialog.setLocationRelativeTo(this);
 
-        //이름 입력단
+        // 이름 입력단
         JLabel nameLabel = new JLabel("Name:");
         nameLabel.setBounds(20, 20, 100, 30);
         JTextField nameField = new JTextField();
         nameField.setBounds(100, 20, 150, 30);
 
-        //아이디 입력단
+        // 아이디 입력단
         JLabel idLabel = new JLabel("Id:");
         idLabel.setBounds(20, 60, 100, 30);
         JTextField idField = new JTextField();
         idField.setBounds(100, 60, 150, 30);
 
-        //확인 버튼
+        // 확인 버튼
         JButton okButton = new JButton("OK");
         okButton.setBounds(100, 140, 80, 30);
         okButton.addActionListener(ae -> {
-                    try {
-                        String name = nameField.getText().trim();
-                        int id = Integer.parseInt(idField.getText());
-                        if (name.isEmpty()) {
-                            throw new IllegalArgumentException("이름은 비워둘 수 없습니다.");
-                        }
+            try {
+                String name = nameField.getText().trim();
+                int id = Integer.parseInt(idField.getText());
+                if (name.isEmpty()) {
+                    throw new IllegalArgumentException("이름은 비워둘 수 없습니다.");
+                }
 
-                        // Borrower 객체 생성
-                        // Borrower newBorrower = new Borrower(id, name);
+                // 입력한 정보를 확인하는 팝업창
+                int confirm = JOptionPane.showConfirmDialog(
+                    dialog,
+                    String.format("이름: %s\nID: %d\n등록하시겠습니까?", name, id),
+                    "정보 확인",
+                    JOptionPane.YES_NO_OPTION
+                );
 
-                        // LibraryApplication에서 제공하는 등록 기능 활용
-                        libraryApp.registerNewBorrower(id, name);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    // LibraryApplication에서 제공하는 등록 기능 활용
+                    libraryApp.registerNewBorrower(id, name);
 
-                        // 성공 메시지
-                        JOptionPane.showMessageDialog(dialog, "이용자가 성공적으로 등록되었습니다.");
-                        dialog.dispose(); // 창 닫기
+                    // 성공 메시지
+                    JOptionPane.showMessageDialog(dialog, "이용자가 성공적으로 등록되었습니다.");
+                    dialog.dispose(); // 창 닫기
+                }
 
-                    } catch (NumberFormatException ex) {
-                        // id가 숫자가 아닌 경우 처리
-                        JOptionPane.showMessageDialog(dialog, "ID는 숫자여야 합니다.");
-                    } catch (IllegalArgumentException ex) {
-                        // 이름 비어있는 경우 처리
-                        JOptionPane.showMessageDialog(dialog, ex.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
-                    } catch (Exception ex) {
-                        // 기타 예외 처리
-                        JOptionPane.showMessageDialog(dialog, "이용자 등록에 실패했습니다: " + ex.getMessage());
-                    }
-            });
+            } catch (NumberFormatException ex) {
+                // id가 숫자가 아닌 경우 처리
+                JOptionPane.showMessageDialog(dialog, "ID는 숫자여야 합니다.");
+            } catch (IllegalArgumentException ex) {
+                // 이름 비어있는 경우 처리
+                JOptionPane.showMessageDialog(dialog, ex.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                // 기타 예외 처리
+                JOptionPane.showMessageDialog(dialog, "이용자 등록에 실패했습니다: " + ex.getMessage());
+            }
+        });
 
         dialog.add(nameLabel);
         dialog.add(nameField);
