@@ -77,7 +77,12 @@ public class CopyOfGui7 extends JFrame {
         // JFrame 기본 설정
         setTitle("도서관 관리");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 400);
+        setSize(1280, 720);
+
+        // 폰트 설정
+        Font buttonFont = new Font("맑은 고딕", Font.PLAIN, 14);
+        Font labelFont = new Font("맑은 고딕", Font.PLAIN, 14);
+        Font textFont = new Font("맑은 고딕", Font.PLAIN, 14);
 
         // Container 가져오기
         Container container = getContentPane();
@@ -85,7 +90,8 @@ public class CopyOfGui7 extends JFrame {
 
         // 입력 필드
         JTextField inputField = new JTextField();
-        inputField.setBounds(10, 10, 150, 30);
+        inputField.setBounds(20, 20, 250, 40);
+        inputField.setFont(textFont);
         container.add(inputField);
 
         // 엔터 키 입력 처리
@@ -98,17 +104,23 @@ public class CopyOfGui7 extends JFrame {
 
         // 상단 버튼 생성
         JButton bookRegistrationButton = new JButton("신규 책 등록");
-        bookRegistrationButton.setBounds(170, 10, 120, 30);
+        bookRegistrationButton.setBounds(290, 20, 180, 40);
         JButton bookDisplayButton = new JButton("책 표시");
-        bookDisplayButton.setBounds(300, 10, 120, 30);
+        bookDisplayButton.setBounds(490, 20, 180, 40);
         JButton borrowerRegistrationButton = new JButton("이용자 등록");
-        borrowerRegistrationButton.setBounds(430, 10, 120, 30);
+        borrowerRegistrationButton.setBounds(690, 20, 180, 40);
         JButton bookReturnButton = new JButton("반납");
-        bookReturnButton.setBounds(560, 10, 120, 30);
+        bookReturnButton.setBounds(890, 20, 180, 40);
         container.add(bookRegistrationButton);
         container.add(bookDisplayButton);
         container.add(borrowerRegistrationButton);
         container.add(bookReturnButton);
+
+        // 버튼 폰트 설정
+        bookRegistrationButton.setFont(buttonFont);
+        bookDisplayButton.setFont(buttonFont);
+        borrowerRegistrationButton.setFont(buttonFont);
+        bookReturnButton.setFont(buttonFont);
 
         // JList와 모델 생성
         model = new DefaultListModel<>();
@@ -117,7 +129,7 @@ public class CopyOfGui7 extends JFrame {
 
         // JScrollPane에 JList 추가
         JScrollPane leftScrollPane = new JScrollPane(leftList);
-        leftScrollPane.setBounds(10, 50, 150, 300);
+        leftScrollPane.setBounds(20, 80, 250, 580);
         container.add(leftScrollPane);
 
         // 오른쪽 패널 생성 (JPanel로 묶기)
@@ -138,7 +150,7 @@ public class CopyOfGui7 extends JFrame {
         deleteButton.setVisible(false); // 초기에는 보이지 않게 설정
 
         // 버튼 크기 통일
-        Dimension buttonSize = new Dimension(100, 30);
+        Dimension buttonSize = new Dimension(150, 40);
         loanButton.setPreferredSize(buttonSize);
         deleteButton.setPreferredSize(buttonSize);
 
@@ -147,7 +159,7 @@ public class CopyOfGui7 extends JFrame {
 
         rightPanel.add(buttonPanel); // 오른쪽 패널에 버튼 패널 추가
         // 오른쪽 패널을 container에 직접 추가
-        rightPanel.setBounds(170, 50, 510, 300); // 오른쪽 패널 크기 설정
+        rightPanel.setBounds(290, 80, 950, 580); // 오른쪽 패널 크기 설정
         container.add(rightPanel); // 컨테이너에 추가
         
         // JList와 모델 생성
