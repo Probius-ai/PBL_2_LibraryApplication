@@ -360,35 +360,68 @@ public class CopyOfGui7 extends JFrame {
         JButton okButton = new JButton("OK");
         okButton.setBounds(100, 140, 80, 30);
         okButton.addActionListener(ae -> {
-                    try {
-                        // 사용자 입력 받기
-                        String title = titleField.getText();  // 책 제목
-                        String author = authorField.getText();  // 책 저자
-                        String isbn = isbnField.getText();  // 카탈로그 번호 (숫자)
-                        if (title.isEmpty()) {
-                            throw new IllegalArgumentException("제목은 비워둘 수 없습니다.");
-                        }
-                        if (author.isEmpty()) {
-                            throw new IllegalArgumentException("저자는 비워둘 수 없습니다.");
-                        }
-                        if (isbn.isEmpty()) {
-                            throw new IllegalArgumentException("isbn은 비워둘 수 없습니다.");
-                        }
+            try {
+                // 사용자 입력 받기
+                String title = titleField.getText().trim();
+                String author = authorField.getText().trim();
+                String isbn = isbnField.getText().trim();
 
-                        // Book 객체 생성 (ISBN도 필요하면 추가로 처리)
+                // 입력값 검증
+                if (title.isEmpty()) {
+                    throw new IllegalArgumentException("제목은 비워둘 수 없습니다.");
+                }
+                if (author.isEmpty()) {
+                    throw new IllegalArgumentException("저자는 비워둘 수 없습니다.");
+                }
+                if (isbn.isEmpty()) {
+                    throw new IllegalArgumentException("ISBN은 비워둘 수 없습니다.");
+                }
 
-                        // BookRegistrastionFunction을 사용하여 책 등록
-                        libraryApp.registerNewBook(isbn, title, author);  // LibraryApplication을 통해 책 등록
+                // 입력한 정보를 확인하는 팝업창
+                int confirm = JOptionPane.showConfirmDialog(
+                    dialog,
+                    String.format(
+                        "다음 정보로 책을 등록하시겠습니까?\n\n" +
+                        "제목: %s\n" +
+                        "저자: %s\n" +
+                        "ISBN: %s",
+                        title, author, isbn
+                    ),
+                    "책 정보 확인",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+                );
 
-                        // 성공 메시지
-                        JOptionPane.showMessageDialog(dialog, "책이 성공적으로 등록되었습니다.");
-                        dialog.dispose();  // 창 닫기
+                if (confirm == JOptionPane.YES_OPTION) {
+                    // 책 등록 처리
+                    libraryApp.registerNewBook(isbn, title, author);
 
-                    }  catch (Exception ex) {
-                        // 기타 예외 처리
-                        JOptionPane.showMessageDialog(dialog, "책 등록에 실패했습니다: " + ex.getMessage());
-                    }
-            });
+                    // 성공 메시지
+                    JOptionPane.showMessageDialog(
+                        dialog, 
+                        "책이 성공적으로 등록되었습니다.",
+                        "등록 완료",
+                        JOptionPane.INFORMATION_MESSAGE
+                    );
+                    dialog.dispose();  // 창 닫기
+                }
+
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(
+                    dialog, 
+                    ex.getMessage(),
+                    "입력 오류",
+                    JOptionPane.ERROR_MESSAGE
+                );
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(
+                    dialog, 
+                    "책 등록에 실패했습니다: " + ex.getMessage(),
+                    "등록 오류",
+                    JOptionPane.ERROR_MESSAGE
+                );
+            }
+        });
 
         dialog.add(titleLabel);
         dialog.add(titleField);
