@@ -4,6 +4,8 @@ import data.Library;
 import java.util.List;
 
 public class LibraryApplication {
+    private static final String DATA_FILE = "library_data.ser";
+    
     private Library library;
     private AvailableBookListFunction availableBookList;
     private BookLoanFunction bookLoan;
@@ -11,6 +13,8 @@ public class LibraryApplication {
     private BorrowerRegistrationFunction borrowerRegistration;
     private BookReturnFunction bookReturn;
     private LoanedBookListFunction loanedBookList;
+    private BookDeleteFunction bookDelete;
+    private BorrowerDeleteFunction borrowerDelete;
 
     public LibraryApplication() {
         this.library = new Library();
@@ -24,6 +28,8 @@ public class LibraryApplication {
         this.borrowerRegistration = new BorrowerRegistrationFunction(library);
         this.bookReturn = new BookReturnFunction(library);
         this.loanedBookList = new LoanedBookListFunction(library);
+        this.bookDelete = new BookDeleteFunction(library);
+        this.borrowerDelete = new BorrowerDeleteFunction(library);
     }
 
     // 각 기능에 대한 호출 메서드
@@ -92,5 +98,42 @@ public class LibraryApplication {
     // 대출된 책 목록 반환
     public List<data.Book> getLoanedBooks() {
         return loanedBookList.getLoanedBooks();
+    }
+
+    public void saveLibraryData() {
+        library.saveToFile(DATA_FILE);
+    }
+    
+    public void loadLibraryData() {
+        try {
+            library.loadFromFile(DATA_FILE);
+            // 기능들 재초기화
+            initializeFunctions();
+        } catch (RuntimeException e) {
+            System.err.println("데이터 파일을 불러올 수 없습니다: " + e.getMessage());
+            // 새로운 라이브러리로 시작
+            this.library = new Library();
+            initializeFunctions();
+        }
+    }
+
+    // 책 삭제 기능 반환을 위한 getter
+    public BookDeleteFunction getBookDelete() {
+        return bookDelete;
+    }
+
+    // 편의를 위한 메서드 추가
+    public boolean deleteBook(String isbn) {
+        return bookDelete.deleteBookByISBN(isbn);
+    }
+
+    // BorrowerDeleteFunction 반환을 위한 getter
+    public BorrowerDeleteFunction getBorrowerDelete() {
+        return borrowerDelete;
+    }
+
+    // 편의를 위한 메서드 추가
+    public boolean deleteBorrower(int borrowerId) {
+        return borrowerDelete.deleteBorrowerById(borrowerId);
     }
 }

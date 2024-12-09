@@ -1,8 +1,10 @@
 package data;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Book implements Comparable<Book> {
+public class Book implements Comparable<Book>, Serializable {
+    private static final long serialVersionUID = 1L;
     private String isbn;
     private String title;
     private String author;

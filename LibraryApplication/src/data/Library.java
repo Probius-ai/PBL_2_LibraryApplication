@@ -5,8 +5,10 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.io.*;
 
-public class Library {
+public class Library implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Set<Book> bookCollection;
     private Set<Borrower> borrowerCollection;
     private LinkedList<Loan> loanCollection;
@@ -33,7 +35,7 @@ public class Library {
         loan.getBook().setLoan(loan);
     }
 
-    public Set<Book> getBooks() {
+    public Set<Book> getBookCollection() {
         return bookCollection;
     }
 
@@ -100,5 +102,28 @@ public class Library {
         return loanHistory.getCurrentLoans().stream()
                 .filter(loan -> loan.getBorrower().equals(borrower))
                 .toList();
+    }
+
+    public void saveToFile(String filename) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename))) {
+            out.writeObject(bookCollection);
+            out.writeObject(borrowerCollection);
+            out.writeObject(loanCollection);
+            out.writeObject(loanHistory);
+        } catch (IOException e) {
+            throw new RuntimeException("데이터 저장 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void loadFromFile(String filename) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))) {
+            this.bookCollection = (Set<Book>) in.readObject();
+            this.borrowerCollection = (Set<Borrower>) in.readObject();
+            this.loanCollection = (LinkedList<Loan>) in.readObject();
+            this.loanHistory = (LoanHistory) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException("데이터 로딩 중 오류가 발생했습니다: " + e.getMessage());
+        }
     }
 }

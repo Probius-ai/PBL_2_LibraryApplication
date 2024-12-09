@@ -12,21 +12,21 @@ public class BookSearchFunction {
         this.library = library;
     }
     public ArrayList<Book> searchBooksByTitle(String searchTitle) {
-        return library.getBooks().stream()
+        return library.getBookCollection().stream()
                 .filter(book -> book.getTitle().contains(searchTitle))
                 .collect(Collectors.toCollection(ArrayList::new));
         // 책 제목으로 검색 //책 객체 반환 //반환값으로 book객체의 메소드 사용 가능
     }
 
     public ArrayList<Book> searchBooksByIsbn(String searchIsbn) {
-        return library.getBooks().stream()
+        return library.getBookCollection().stream()
                 .filter(book -> book.getIsbn().contains(searchIsbn))
                 .collect(Collectors.toCollection(ArrayList::new));
         // 책 ISBN으로 검색 //책 객체 반환 //반환값으로 book객체의 메소드 사용 가능
     }
 
     public ArrayList<Book> searchBooksByAuthor(String searchAuthor) {
-        return library.getBooks().stream()
+        return library.getBookCollection().stream()
                 .filter(book -> book.getAuthor().contains(searchAuthor))
                 .collect(Collectors.toCollection(ArrayList::new));
         // 책 저자로 검색 //책 객체 반환 //반환값으로 book객체의 메소드 사용 가능

@@ -1,8 +1,10 @@
 package data;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Borrower {
+public class Borrower implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int borrowerId;
     private String name;
 
