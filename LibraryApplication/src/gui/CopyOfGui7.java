@@ -23,6 +23,11 @@ public class CopyOfGui7 extends JFrame {
     private BorrowerSearchFunction borrowerSearch;
     private BookSearchFunction bookSearch;
 
+    // 폰트 변수를 클래스 레벨로 이동
+    private final Font buttonFont = new Font("맑은 고딕", Font.BOLD, 14);
+    private final Font labelFont = new Font("맑은 고딕", Font.PLAIN, 14);
+    private final Font textFont = new Font("맑은 고딕", Font.PLAIN, 14);
+
     // 생성자에서 libraryApp 초기화
     public CopyOfGui7(LibraryApplication libraryApp) {
         this.libraryApp = libraryApp;  // 전달받은 LibraryApplication 객체 사용
@@ -78,11 +83,6 @@ public class CopyOfGui7 extends JFrame {
         setTitle("도서관 관리");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1280, 720);
-
-        // 폰트 설정
-        Font buttonFont = new Font("맑은 고딕", Font.PLAIN, 14);
-        Font labelFont = new Font("맑은 고딕", Font.PLAIN, 14);
-        Font textFont = new Font("맑은 고딕", Font.PLAIN, 14);
 
         // Container 가져오기
         Container container = getContentPane();
@@ -174,11 +174,11 @@ public class CopyOfGui7 extends JFrame {
 
         // 왼쪽 리스트 선택 리스너
         leftList.addListSelectionListener(e -> {
-                    if (!e.getValueIsAdjusting()) {  // 사용자가 선택을 완료했을 때만 처리
-                        Object selectedObject = leftList.getSelectedValue();  // 선택된 객체
+                    if (!e.getValueIsAdjusting()) {
+                        Object selectedObject = leftList.getSelectedValue();
 
                         if (selectedObject != null) {
-                            if (selectedObject instanceof Book) {  // 선택된 객체가 Book일 경우
+                            if (selectedObject instanceof Book) {
                                 Book book = (Book) selectedObject;
                                 rightTextArea.setText("Book Details:\n" +
                                     "Title: " + book.getTitle() + "\n" +
@@ -198,7 +198,20 @@ public class CopyOfGui7 extends JFrame {
                                 Borrower borrower = (Borrower) selectedObject;
                                 rightTextArea.setText("Borrower Details:\n" +
                                     "Name: " + borrower.getName() + "\n" +
-                                    "Id: " + borrower.getBorrowerId());
+                                    "Id: " + borrower.getBorrowerId() + "\n" +
+                                    "===========================\n");
+
+                                // 대출한 책 목록 추가
+                                List<Book> borrowedBooks = libraryApp.getLoanedBookList().getBooksBorrowedBy(borrower);
+                                if (borrowedBooks.isEmpty()) {
+                                    rightTextArea.append("이 이용자는 현재 대출 중인 책이 없습니다.");
+                                } else {
+                                    rightTextArea.append("대출한 책 목록:\n");
+                                    for (Book book : borrowedBooks) {
+                                        rightTextArea.append("- " + book.getTitle() + " (ISBN: " + book.getIsbn() + ")\n");
+                                    }
+                                }
+
                                 loanButton.setVisible(true);
                                 deleteButton.setText("이용자 삭제");
                                 deleteButton.setVisible(true);
@@ -418,6 +431,7 @@ public class CopyOfGui7 extends JFrame {
         //확인 버튼
         JButton okButton = new JButton("OK");
         okButton.setBounds(100, 140, 80, 30);
+        okButton.setFont(buttonFont);
         okButton.addActionListener(ae -> {
             try {
                 // 사용자 입력 받기
@@ -514,6 +528,7 @@ public class CopyOfGui7 extends JFrame {
         // 확인 버튼
         JButton okButton = new JButton("OK");
         okButton.setBounds(100, 140, 80, 30);
+        okButton.setFont(buttonFont);
         okButton.addActionListener(ae -> {
             try {
                 String name = nameField.getText().trim();
@@ -602,6 +617,7 @@ public class CopyOfGui7 extends JFrame {
 
         JButton okButton = new JButton("확인");
         okButton.setBounds(100, 120, 80, 30);
+        okButton.setFont(buttonFont);
         okButton.addActionListener(ae -> {
                     Set<Book> books = libraryApp.getLibrary().getBookCollection();
                     ArrayList<Book> filteredBooks = new ArrayList<>();
@@ -668,6 +684,8 @@ public class CopyOfGui7 extends JFrame {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton okButton = new JButton("반납");
         JButton cancelButton = new JButton("취소");
+        okButton.setFont(buttonFont);
+        cancelButton.setFont(buttonFont);
         buttonPanel.add(okButton);
         buttonPanel.add(cancelButton);
 

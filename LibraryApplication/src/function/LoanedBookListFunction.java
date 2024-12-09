@@ -2,6 +2,8 @@ package function;
 
 import data.Library;
 import data.Book;
+import data.Borrower;
+import data.Loan;
 import java.util.List;
 import java.util.stream.Collectors;
 // import java.time.LocalDate;
@@ -37,5 +39,12 @@ public class LoanedBookListFunction {
                     loan.getBorrower().getName(),
                     loan.getDueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))
                 .orElse(null);
+    }
+
+    // 특정 대출자가 빌린 책 목록 반환
+    public List<Book> getBooksBorrowedBy(Borrower borrower) {
+        return library.getBorrowerCurrentLoans(borrower).stream()
+                .map(Loan::getBook)
+                .collect(Collectors.toList());
     }
 }
