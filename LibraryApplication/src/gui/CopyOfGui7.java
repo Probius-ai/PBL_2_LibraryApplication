@@ -285,6 +285,7 @@ public class CopyOfGui7 extends JFrame {
         JDialog dialog = new JDialog(this, "신규 책 등록", true);
         dialog.setSize(300, 220);
         dialog.setLayout(null);
+        dialog.setLocationRelativeTo(this);
 
         //책 제목 입력단
         JLabel titleLabel = new JLabel("Title:");
@@ -353,6 +354,7 @@ public class CopyOfGui7 extends JFrame {
         JDialog dialog = new JDialog(this, "신규 이용자 등록", true);
         dialog.setSize(300, 220);
         dialog.setLayout(null);
+        dialog.setLocationRelativeTo(this);
 
         //이름 입력단
         JLabel nameLabel = new JLabel("Name:");
@@ -441,6 +443,7 @@ public class CopyOfGui7 extends JFrame {
         JDialog dialog = new JDialog(this, "책 필터 옵션", true);
         dialog.setSize(300, 200);
         dialog.setLayout(null);
+        dialog.setLocationRelativeTo(this);
 
         JCheckBox onLoanCheckBox = new JCheckBox("대출 중인 책 표시");
         onLoanCheckBox.setBounds(50, 30, 200, 30);
@@ -606,6 +609,7 @@ public class CopyOfGui7 extends JFrame {
         LibraryApplication libraryApp = new LibraryApplication();  // LibraryApplication 객체 생성
         SwingUtilities.invokeLater(() -> {
                     CopyOfGui7 gui = new CopyOfGui7(libraryApp);  // 생성된 libraryApp을 GUI에 전달
+                    gui.setLocationRelativeTo(null); // 윈도우를 화면 중앙에 위치
                     gui.setVisible(true);
             });
     }
