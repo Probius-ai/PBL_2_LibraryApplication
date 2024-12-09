@@ -173,25 +173,29 @@ public class CopyOfGui7 extends JFrame {
                                     "Author: " + book.getAuthor() + "\n" +
                                     "ISBN: " + book.getIsbn() + "\n" +
                                     "On Loan: " + (!book.isAvailable() ? "Yes" : "No"));
+                                
+                                // 책이 대출 중이 아닐 때만 삭제 버튼 표시
+                                deleteButton.setText("책 삭제");
+                                deleteButton.setVisible(book.isAvailable());
+                                if (!book.isAvailable()) {
+                                    rightTextArea.append("\n\n이 책은 현재 대출 중이므로 삭제할 수 없습니다.");
+                                }
                                 loanButton.setVisible(false);
-                                deleteButton.setVisible(false);
 
-                            } else if (selectedObject instanceof Borrower) {  // 선택된 객체가 Borrower일 경우
+                            } else if (selectedObject instanceof Borrower) {
                                 Borrower borrower = (Borrower) selectedObject;
                                 rightTextArea.setText("Borrower Details:\n" +
                                     "Name: " + borrower.getName() + "\n" +
                                     "Id: " + borrower.getBorrowerId());
                                 loanButton.setVisible(true);
-                                deleteButton.setVisible(true); // Borrower가 선택되면 삭제 버튼도 표시
-
+                                deleteButton.setText("이용자 삭제");
+                                deleteButton.setVisible(true);
                             }
-                        } else {  // 알 수 없는 객체 타입일 경우
-                            rightTextArea.setText("Unknown object type selected.");
-                            loanButton.setVisible(false);  // 알 수 없는 타입이 선택되면 loanButton 비활성화
+                        } else {
+                            rightTextArea.setText("");
+                            loanButton.setVisible(false);
+                            deleteButton.setVisible(false);
                         }
-                    } else {
-                        rightTextArea.setText("");  // 선택 해제 시 초기화
-                        loanButton.setVisible(false);  // loanButton 비활성화
                     }
             });
 
@@ -289,42 +293,85 @@ public class CopyOfGui7 extends JFrame {
         borrowerRegistrationButton.addActionListener(e -> registerNewBorrower());
         bookReturnButton.addActionListener(e -> returnBook());
 
-        // 삭제 버튼 클릭 이벤트 추가
+        // 삭제 버튼 클릭 이벤트 수정
         deleteButton.addActionListener(ae -> {
-            Borrower selectedBorrower = (Borrower) leftList.getSelectedValue();
-            if (selectedBorrower != null) {
-                int option = JOptionPane.showConfirmDialog(
-                    this,
-                    String.format("'%s' 이용자를 삭제하시겠습니까?", selectedBorrower.getName()),
-                    "이용자 삭제 확인",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE
-                );
-
-                if (option == JOptionPane.YES_OPTION) {
-                    boolean deleted = libraryApp.deleteBorrower(selectedBorrower.getBorrowerId());
-                    if (deleted) {
+            Object selectedObject = leftList.getSelectedValue();
+            if (selectedObject != null) {
+                if (selectedObject instanceof Book) {
+                    Book book = (Book) selectedObject;
+                    if (!book.isAvailable()) {
                         JOptionPane.showMessageDialog(
                             this,
-                            "이용자가 성공적으로 삭제되었습니다.",
-                            "삭제 완료",
-                            JOptionPane.INFORMATION_MESSAGE
-                        );
-                        // 리스트에서 선택 해제 및 텍스트 영역 초기화
-                        leftList.clearSelection();
-                        rightTextArea.setText("");
-                        // 버튼 숨기기
-                        loanButton.setVisible(false);
-                        deleteButton.setVisible(false);
-                        // 리스트 모델에서 해당 이용자 제거
-                        model.removeElement(selectedBorrower);
-                    } else {
-                        JOptionPane.showMessageDialog(
-                            this,
-                            "이용자 삭제에 실패했습니다.",
-                            "삭제 실패",
+                            "대출 중인 책은 삭제할 수 없습니다.",
+                            "삭제 불가",
                             JOptionPane.ERROR_MESSAGE
                         );
+                        return;
+                    }
+
+                    int option = JOptionPane.showConfirmDialog(
+                        this,
+                        String.format("'%s' 책을 삭제하시겠습니까?", book.getTitle()),
+                        "책 삭제 확인",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE
+                    );
+
+                    if (option == JOptionPane.YES_OPTION) {
+                        boolean deleted = libraryApp.deleteBook(book.getIsbn());
+                        if (deleted) {
+                            JOptionPane.showMessageDialog(
+                                this,
+                                "책이 성공적으로 삭제되었습니다.",
+                                "삭제 완료",
+                                JOptionPane.INFORMATION_MESSAGE
+                            );
+                            leftList.clearSelection();
+                            rightTextArea.setText("");
+                            deleteButton.setVisible(false);
+                            model.removeElement(book);
+                        } else {
+                            JOptionPane.showMessageDialog(
+                                this,
+                                "책 삭제에 실패했습니다.",
+                                "삭제 실패",
+                                JOptionPane.ERROR_MESSAGE
+                            );
+                        }
+                    }
+                } else if (selectedObject instanceof Borrower) {
+                    // 기존 이용자 삭제 코드
+                    Borrower borrower = (Borrower) selectedObject;
+                    int option = JOptionPane.showConfirmDialog(
+                        this,
+                        String.format("'%s' 이용자를 삭제하시겠습니까?", borrower.getName()),
+                        "이용자 삭제 확인",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE
+                    );
+
+                    if (option == JOptionPane.YES_OPTION) {
+                        boolean deleted = libraryApp.deleteBorrower(borrower.getBorrowerId());
+                        if (deleted) {
+                            JOptionPane.showMessageDialog(
+                                this,
+                                "이용자가 성공적으로 삭제되었습니다.",
+                                "삭제 완료",
+                                JOptionPane.INFORMATION_MESSAGE
+                            );
+                            leftList.clearSelection();
+                            rightTextArea.setText("");
+                            loanButton.setVisible(false);
+                            deleteButton.setVisible(false);
+                            model.removeElement(borrower);
+                        } else {
+                            JOptionPane.showMessageDialog(
+                                this,
+                                "이용자 삭제에 실패했습니다.",
+                                "삭제 실패",
+                                JOptionPane.ERROR_MESSAGE
+                            );
+                        }
                     }
                 }
             }
