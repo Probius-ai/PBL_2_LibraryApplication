@@ -35,7 +35,7 @@ public class Library implements Serializable {
         loan.getBook().setLoan(loan);
     }
 
-    public Set<Book> getBooks() {
+    public Set<Book> getBookCollection() {
         return bookCollection;
     }
 

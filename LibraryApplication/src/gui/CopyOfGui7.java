@@ -10,7 +10,7 @@ import data.*;
 import java.util.Set;
 import java.util.ArrayList;
 // import java.util.TreeSet;
-import java.util.stream.Collectors;
+// import java.util.stream.Collectors;
 import java.util.List;
 
 public class CopyOfGui7 extends JFrame {
@@ -21,11 +21,13 @@ public class CopyOfGui7 extends JFrame {
     private JList<Object> loanList;
     private JTextArea rightTextArea;
     private BorrowerSearchFunction borrowerSearch;
+    private BookSearchFunction bookSearch;
 
     // 생성자에서 libraryApp 초기화
     public CopyOfGui7(LibraryApplication libraryApp) {
         this.libraryApp = libraryApp;  // 전달받은 LibraryApplication 객체 사용
         this.borrowerSearch = new BorrowerSearchFunction(libraryApp.getLibrary());
+        this.bookSearch = new BookSearchFunction(libraryApp.getLibrary());
 
         // 파일이 존재할 때만 데이터 로드
         try {
@@ -206,9 +208,7 @@ public class CopyOfGui7 extends JFrame {
                                 /////////////////////////////////////////
                                 // ===== 추가된 코드 시작 =====
                                 // ISBN으로 검색된 책 목록 가져오기
-                                ArrayList<Book> foundBooks = library.getBooks().stream()
-                                        .filter(book -> book.getIsbn().contains(isbn))
-                                        .collect(Collectors.toCollection(ArrayList::new));
+                                ArrayList<Book> foundBooks = bookSearch.searchBooksByIsbn(isbn);
                                 
                                 // 검색된 책이 없는 경우
                                 if (foundBooks.isEmpty()) {
@@ -453,8 +453,7 @@ public class CopyOfGui7 extends JFrame {
         JButton okButton = new JButton("확인");
         okButton.setBounds(100, 120, 80, 30);
         okButton.addActionListener(ae -> {
-                    // Library 객체에서 책 목록을 가져옵니다
-                    Set<Book> books = libraryApp.getLibrary().getBooks(); // libraryApp에서 Library 가져오기
+                    Set<Book> books = libraryApp.getLibrary().getBookCollection();
                     ArrayList<Book> filteredBooks = new ArrayList<>();
 
                     // 대출 중인 책 표시 선택되었을때

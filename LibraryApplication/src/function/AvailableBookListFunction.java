@@ -13,7 +13,7 @@ public class AvailableBookListFunction {
     }
 
     public List<Book> getAvailableBooks() {
-        return library.getBooks().stream()
+        return library.getBookCollection().stream()
                 .filter(Book::isAvailable)
                 .collect(Collectors.toList());
     }
