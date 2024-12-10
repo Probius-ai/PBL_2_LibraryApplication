@@ -413,18 +413,21 @@ public class CopyOfGui7 extends JFrame {
         //책 제목 입력단
         JLabel titleLabel = new JLabel("Title:");
         titleLabel.setBounds(20, 20, 100, 30);
+        titleLabel.setFont(labelFont);
         JTextField titleField = new JTextField();
         titleField.setBounds(100, 20, 150, 30);
-
+        
         //책 저자 입력단
         JLabel authorLabel = new JLabel("Author:");
         authorLabel.setBounds(20, 60, 100, 30);
+        authorLabel.setFont(labelFont);
         JTextField authorField = new JTextField();
         authorField.setBounds(100, 60, 150, 30);
 
         //책 카탈로그 번호 입력단
         JLabel isbnLabel = new JLabel("CatalogNum:");
         isbnLabel.setBounds(20, 100, 100, 30);
+        isbnLabel.setFont(labelFont);
         JTextField isbnField = new JTextField();
         isbnField.setBounds(100, 100, 150, 30);
 
@@ -516,6 +519,7 @@ public class CopyOfGui7 extends JFrame {
         // 이름 입력단
         JLabel nameLabel = new JLabel("Name:");
         nameLabel.setBounds(20, 20, 100, 30);
+        nameLabel.setFont(labelFont);
         JTextField nameField = new JTextField();
         nameField.setBounds(100, 20, 150, 30);
 
